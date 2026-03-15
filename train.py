@@ -30,7 +30,7 @@ def generate_data() -> pd.DataFrame:
     # Fórmula simple pero realista para salario base en USD
     data["salary"] = (
         40000
-        + data["years_experience"] * 5000
+        + data["years_experience"].apply(lambda y: y * 5000 * 1.20 if y > 8 else y * 5000)  # experiencia >8 años tiene bonus
         + data["is_remote"]        * 8000
         + data["company_size"]     * 10000
         + data["education_level"]  * 7000
