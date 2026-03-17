@@ -65,8 +65,22 @@ Every push triggers:
 3. Docker image build
 4. Push to DockerHub registry
 
+## Infrastructure
+
+Deployed on AWS using Terraform:
+```bash
+cd infra
+terraform init
+terraform apply
+# API available at the output URL in ~2 minutes
+terraform destroy  # always destroy when done
+```
+
+**Resources:** EC2 t3.micro + Security Group (us-east-1)
+```
+
 ## Next Steps
 
-- [ ] Terraform infrastructure on AWS
+- [x] Terraform infrastructure on AWS
 - [ ] Kubernetes deployment manifests
 - [ ] Prometheus + Grafana observability
