@@ -208,3 +208,9 @@ __marimo__/
 
 # pkl files
 *.pkl
+
+#terraform
+*.tfstate
+*.tfstate.backup
+.terraform/
+*.tfvars
