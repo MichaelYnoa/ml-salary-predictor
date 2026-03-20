@@ -1,0 +1,53 @@
+# observability/docker-compose.yml
+# Docker Compose orquesta múltiples containers como un sistema.
+# En lugar de correr 3 comandos docker run separados,
+# defines todo aquí y lo levantas con un solo comando.
+
+services:
+
+  # ── 1. TU API ─────────────────────────────────────────────────
+  salary-api:
+    image: michaelynoa/salary-predictor:latest
+    ports:
+      - "8000:8000"
+    # restart: unless-stopped = si el container falla, se reinicia
+    # automáticamente. Solo se detiene si tú lo paras manualmente.
+    restart: unless-stopped
+
+  # ── 2. PROMETHEUS ─────────────────────────────────────────────
+  # Prometheus es un sistema de monitoreo que hace scraping —
+  # cada X segundos visita tus servicios y recolecta métricas.
+  # Métricas = números que describen el estado de tu sistema:
+  # requests por segundo, latencia, errores, uso de memoria.
+  prometheus:
+    image: prom/prometheus:latest
+    ports:
+      - "9090:9090"
+    volumes:
+      # Monta el archivo de configuración dentro del container
+      # Sin esto Prometheus no sabe a qué servicios monitorear
+      - ./prometheus.yml:/etc/prometheus/prometheus.yml
+    restart: unless-stopped
+
+  # ── 3. GRAFANA ────────────────────────────────────────────────
+  # Grafana lee los datos de Prometheus y los convierte
+  # en dashboards visuales. Prometheus recolecta, Grafana muestra.
+  grafana:
+    image: grafana/grafana:latest
+    ports:
+      - "3000:3000"
+    environment:
+      # Credenciales por defecto para el dashboard
+      - GF_SECURITY_ADMIN_PASSWORD=devops123
+    volumes:
+      # Persiste los dashboards que crees — sin esto
+      # cada vez que reinicias Grafana pierdes tu configuración
+      - grafana_data:/var/lib/grafana
+    restart: unless-stopped
+    # depends_on = Grafana no arranca hasta que Prometheus esté listo
+    depends_on:
+      - prometheus
+
+# Volumen nombrado para persistir datos de Grafana
+volumes:
+  grafana_data:
