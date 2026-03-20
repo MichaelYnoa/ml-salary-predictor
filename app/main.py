@@ -8,12 +8,17 @@ from pydantic import BaseModel, Field
 import joblib
 import numpy as np
 import os
+from prometheus_fastapi_instrumentator import Instrumentator
 
 app = FastAPI(
     title="Salary Predictor API",
     description="Predicts tech salaries based on experience and profile",
     version="0.1.0"
 )
+
+# Inicializa el instrumentador de Prometheus
+Instrumentator().instrument(app).expose(app)
+
 
 # ── 1. CARGA DE ARTEFACTOS ────────────────────────────────────────
 # Cargamos modelo y scaler UNA vez al arrancar el servidor.
