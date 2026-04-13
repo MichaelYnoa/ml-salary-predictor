@@ -83,4 +83,4 @@ terraform destroy  # always destroy when done
 
 - [x] Terraform infrastructure on AWS
 - [X] Prometheus + Grafana observability
-- [ ] Kubernetes deployment manifests
+- [X] Kubernetes deployment manifests
