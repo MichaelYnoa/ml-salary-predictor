@@ -1,0 +1,64 @@
+# k8s/deployment.yaml
+# Un Deployment le dice a Kubernetes QUÉ correr y CUÁNTAS copias.
+# K8s garantiza que siempre haya ese número de pods corriendo.
+# Si uno falla — lo reemplaza automáticamente.
+
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: salary-predictor
+  labels:
+    app: salary-predictor
+
+spec:
+  # Número de pods corriendo simultáneamente
+  # Con 2 réplicas si una falla la otra sigue sirviendo tráfico
+  replicas: 2
+
+  # Le dice a K8s qué pods gestiona este Deployment
+  # Debe coincidir con los labels del template abajo
+  selector:
+    matchLabels:
+      app: salary-predictor
+
+  template:
+    metadata:
+      labels:
+        app: salary-predictor
+
+    spec:
+      containers:
+      - name: salary-predictor
+        image: michaelynoa/salary-predictor:latest
+
+        ports:
+        - containerPort: 8000
+
+        # Recursos que cada pod puede usar
+        # requests = mínimo garantizado
+        # limits = máximo permitido
+        resources:
+          requests:
+            memory: "128Mi"
+            cpu: "100m"    # 100 millicores = 0.1 CPU
+          limits:
+            memory: "256Mi"
+            cpu: "500m"    # 500 millicores = 0.5 CPU
+
+        # Liveness probe — ¿está vivo el pod?
+        # Si falla 3 veces → K8s reinicia el container
+        livenessProbe:
+          httpGet:
+            path: /health
+            port: 8000
+          initialDelaySeconds: 15
+          periodSeconds: 10
+
+        # Readiness probe — ¿está listo para recibir tráfico?
+        # Si falla → K8s lo saca del load balancer sin reiniciarlo
+        readinessProbe:
+          httpGet:
+            path: /health
+            port: 8000
+          initialDelaySeconds: 10
+          periodSeconds: 5

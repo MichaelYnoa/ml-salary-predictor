@@ -1,0 +1,25 @@
+# k8s/service.yaml
+# Un Service expone los pods al exterior.
+# Sin Service los pods son accesibles solo dentro del cluster.
+# K8s hace load balancing automático entre todos los pods healthy.
+
+apiVersion: v1
+kind: Service
+metadata:
+  name: salary-predictor-service
+
+spec:
+  # NodePort expone el servicio en un puerto del nodo
+  # En minikube esto nos permite acceder desde localhost
+  type: NodePort
+
+  # Conecta este Service con los pods que tienen este label
+  # Debe coincidir con los labels del Deployment
+  selector:
+    app: salary-predictor
+
+  ports:
+  - protocol: TCP
+    port: 80          # puerto del Service interno
+    targetPort: 8000  # puerto del container
+    nodePort: 30080   # puerto externo en el nodo
