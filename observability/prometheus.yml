@@ -15,4 +15,4 @@ scrape_configs:
     static_configs:
       # En Docker Compose los servicios se comunican por nombre
       # "salary-api" es el nombre del servicio que definiste arriba
-      - targets: ['salary-api:8000']
+      - targets: ['host.docker.internal:8080']
