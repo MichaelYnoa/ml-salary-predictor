@@ -79,6 +79,47 @@ terraform destroy  # always destroy when done
 **Resources:** EC2 t3.micro + Security Group (us-east-1)
 ```
 
+## Running the Stack
+
+Start everything with a single command:
+
+```bash
+./start.sh
+```
+
+Once running, access the services at:
+
+| Service    | URL                          | Credentials      |
+|------------|------------------------------|------------------|
+| API        | http://localhost:8080        | -                |
+| API Docs   | http://localhost:8080/docs   | -                |
+| Prometheus | http://localhost:9090        | -                |
+| Grafana    | http://localhost:3000        | admin/devops123  |
+
+To stop everything:
+
+```bash
+./stop.sh
+```
+
+## Useful Commands
+
+```bash
+# Check running pods
+kubectl get pods
+
+# Check services
+kubectl get services
+
+# Check port-forward status
+ps aux | grep "kubectl port-forward"
+
+# Generate test traffic
+curl -X POST http://localhost:8080/predict \
+  -H "Content-Type: application/json" \
+  -d '{"years_experience": 12, "is_remote": 1, "company_size": 3, "education_level": 2}'
+```
+
 ## Next Steps
 
 - [x] Terraform infrastructure on AWS
